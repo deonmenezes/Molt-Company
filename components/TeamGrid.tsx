@@ -10,21 +10,21 @@ interface TeamMember {
 const TeamMemberCard: React.FC<TeamMember> = ({ name, role, description, imgSrc }) => (
   <div className="bg-white border-3 border-black shadow-pop p-6 flex flex-col items-center hover:shadow-pop-lg transition-all transform hover:-translate-y-1 group h-full">
     <div className="h-32 w-32 bg-gray-200 rounded-full border-3 border-black mb-4 overflow-hidden relative">
-        <img 
-          src={imgSrc} 
-          alt={name} 
-          className="w-full h-full object-cover animate-float" 
-        />
-        {/* Shine effect overlay */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none transform translate-x-full group-hover:translate-x-0"></div>
+      <img
+        src={imgSrc}
+        alt={name}
+        className="w-full h-full object-cover animate-float"
+      />
+      {/* Shine effect overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none transform translate-x-full group-hover:translate-x-0"></div>
     </div>
-    
+
     <h3 className="text-3xl font-bold text-center mb-1 uppercase font-headings leading-none">{name}</h3>
-    
+
     <div className="bg-pop-yellow px-3 py-1 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 mb-4 mt-1">
       <span className="text-xs md:text-sm font-bold uppercase tracking-widest text-black">{role}</span>
     </div>
-    
+
     <div className="w-full h-1 bg-gray-200 mb-4 border-t-2 border-black border-dashed"></div>
     <p className="text-center font-semibold text-gray-800 leading-snug">{description}</p>
   </div>
@@ -36,49 +36,49 @@ export const TeamGrid: React.FC = () => {
       name: "Amy",
       role: "HR Specialist",
       description: "Manages onboarding, payroll inquiries, and team culture without the paperwork.",
-      imgSrc: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=400"
+      imgSrc: "/avatars/amy.png"
     },
     {
       name: "Caroline",
       role: "Sales Lead",
       description: "Prospects leads, books meetings, and follows up relentlessly 24/7.",
-      imgSrc: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400&h=400"
+      imgSrc: "/avatars/caroline.png"
     },
     {
       name: "Harsh",
       role: "Developer",
       description: "Builds scalable architecture and turns caffeine into error-free code.",
-      imgSrc: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400&h=400"
+      imgSrc: "/avatars/harsh.png"
     },
     {
       name: "Christopher",
       role: "CyberSec / Pentester",
       description: "Monitors threats, secures data endpoints, and ensures compliance.",
-      imgSrc: "https://images.unsplash.com/photo-1531384441138-2736e62e0f19?auto=format&fit=crop&q=80&w=400&h=400"
+      imgSrc: "/avatars/christopher.png"
     },
     {
       name: "Sean",
       role: "AI Engineer",
       description: "Builds custom workflows and integrates new tools into your stack.",
-      imgSrc: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400&h=400"
+      imgSrc: "/avatars/sean.png"
     },
     {
       name: "Xavier",
       role: "Data Analyst",
       description: "Turns raw numbers into actionable growth strategies every morning.",
-      imgSrc: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400&h=400"
+      imgSrc: "/avatars/xavier.png"
     },
     {
       name: "Walter",
       role: "Finance",
       description: "Optimizes cash flow, manages budgets, and forecasts financial growth.",
-      imgSrc: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400&h=400"
+      imgSrc: "/avatars/walter.png"
     },
     {
       name: "Specter",
       role: "Legal Advisor",
       description: "Handles contracts, compliance, and regulatory requirements automatically.",
-      imgSrc: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400&h=400"
+      imgSrc: "/avatars/specter.png"
     }
   ];
 
@@ -106,7 +106,7 @@ export const TeamGrid: React.FC = () => {
             Why hire one person when you can have a whole department?
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
           {members.map((member, index) => (
             <TeamMemberCard key={index} {...member} />

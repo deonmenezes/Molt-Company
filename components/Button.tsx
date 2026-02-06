@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'dark';
@@ -7,16 +8,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   href?: string;
 }
 
-export const Button: React.FC<ButtonProps> = ({ 
-  children, 
-  variant = 'primary', 
-  size = 'md', 
+export const Button: React.FC<ButtonProps> = ({
+  children,
+  variant = 'primary',
+  size = 'md',
   className = '',
   href,
-  ...props 
+  onClick,
+  ...props
 }) => {
   const baseStyles = "font-headings font-bold uppercase border-3 border-black shadow-pop transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-pop-hover inline-block text-center cursor-pointer";
-  
+
   const variants = {
     primary: "bg-pop-yellow text-black",
     secondary: "bg-white text-black",
@@ -31,16 +33,26 @@ export const Button: React.FC<ButtonProps> = ({
 
   const combinedClasses = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
 
+  // Internal links (starting with /)
+  if (href && href.startsWith('/')) {
+    return (
+      <Link to={href} className={combinedClasses} onClick={onClick as any}>
+        {children}
+      </Link>
+    );
+  }
+
+  // External links or anchor links
   if (href) {
     return (
-      <a href={href} className={combinedClasses}>
+      <a href={href} className={combinedClasses} onClick={onClick as any}>
         {children}
       </a>
     );
   }
 
   return (
-    <button className={combinedClasses} {...props}>
+    <button className={combinedClasses} onClick={onClick} {...props}>
       {children}
     </button>
   );
