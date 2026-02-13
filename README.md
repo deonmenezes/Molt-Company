@@ -1,20 +1,55 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Molt Company
 
-# Run and deploy your AI Studio app
+AI-powered workforce platform. React + TypeScript + Vite.
 
-This contains everything you need to run your app locally.
+## Quick Start
 
-View your app in AI Studio: https://ai.studio/apps/drive/1-Oz8epGUP8oQWJqtD3i5DNmApv9blwZY
+```bash
+npm install
+```
 
-## Run Locally
+Copy `.env.local` and fill in your keys:
 
-**Prerequisites:**  Node.js
+```env
+# Gemini AI (for demo page)
+GEMINI_API_KEY=your-gemini-api-key
 
+# Supabase Auth (Google OAuth + email/password signup & login)
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+# Stripe Payments (pricing & shop checkout)
+VITE_STRIPE_PUBLISHABLE_KEY=your-stripe-publishable-key
+```
+
+Run it:
+
+```bash
+npm run dev
+```
+
+App opens at **http://localhost:3000**.
+
+## Where to Get Your Keys
+
+| Key | Where |
+|-----|-------|
+| `GEMINI_API_KEY` | [Google AI Studio](https://aistudio.google.com/apikey) |
+| `VITE_SUPABASE_URL` | [Supabase Dashboard](https://supabase.com/dashboard) → Project Settings → API → Project URL |
+| `VITE_SUPABASE_ANON_KEY` | Same page → `anon` `public` key |
+| `VITE_STRIPE_PUBLISHABLE_KEY` | [Stripe Dashboard](https://dashboard.stripe.com/apikeys) → Publishable key |
+
+## Supabase Setup
+
+1. Create a project at [supabase.com](https://supabase.com)
+2. Go to **Authentication → Providers → Google** and enable it (needs Google OAuth client ID/secret from [Google Cloud Console](https://console.cloud.google.com/apis/credentials))
+3. Add `http://localhost:3000/auth/callback` to your Supabase **Redirect URLs** (Authentication → URL Configuration)
+
+## Stripe Setup
+
+1. Create products & prices in your [Stripe Dashboard](https://dashboard.stripe.com/products)
+2. Replace the placeholder price IDs in `components/pages/PricingPage.tsx` and `ShopPage.tsx` with your real Stripe Price IDs (e.g. `price_1Abc123...`)
+
+## Chat Widget
+
+The floating chat widget (bottom-right) sends messages via the user's email client. Change the contact email in `components/ChatWidget.tsx` (line 5).

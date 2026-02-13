@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from './Button';
 import { Logo } from './ui/Logo';
 import { NavLink } from './ui/NavLink';
+import { useAuth } from '../context/AuthContext';
 
 const navItems = [
   { name: 'Demo', path: '/demo' },
@@ -14,8 +15,12 @@ const navItems = [
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, loading, signOut } = useAuth();
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  const displayName = user?.user_metadata?.full_name || user?.email || 'User';
+  const avatarUrl = user?.user_metadata?.avatar_url;
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b-4 border-black w-full">
@@ -35,10 +40,34 @@ export const Header: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/login" className="text-black font-bold text-lg hover:underline uppercase">
-              Log In
-            </Link>
-            <Button href="/get-started">Get Started</Button>
+            {!loading && user ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="w-8 h-8 rounded-full border-2 border-black" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full border-2 border-black bg-pop-yellow flex items-center justify-center font-bold text-sm">
+                      {displayName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="font-bold text-sm max-w-[150px] truncate">{displayName}</span>
+                </div>
+                <button
+                  onClick={signOut}
+                  className="flex items-center gap-1 text-black font-bold text-sm hover:underline uppercase"
+                >
+                  <LogOut size={16} strokeWidth={3} />
+                  Log Out
+                </button>
+              </div>
+            ) : !loading ? (
+              <>
+                <Link to="/login" className="text-black font-bold text-lg hover:underline uppercase">
+                  Log In
+                </Link>
+                <Button href="/get-started">Get Started</Button>
+              </>
+            ) : null}
           </div>
 
           {/* Mobile menu button */}
@@ -68,18 +97,41 @@ export const Header: React.FC = () => {
                 {item.name}
               </NavLink>
             ))}
-            <Link
-              to="/login"
-              className="block text-black hover:underline px-3 py-2 text-xl font-bold font-headings uppercase"
-              onClick={closeMenu}
-            >
-              Log In
-            </Link>
-            <div className="p-3">
-              <Button className="w-full" href="/get-started" onClick={closeMenu}>
-                Get Started
-              </Button>
-            </div>
+            {!loading && user ? (
+              <>
+                <div className="flex items-center gap-2 px-3 py-2">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="w-8 h-8 rounded-full border-2 border-black" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full border-2 border-black bg-pop-yellow flex items-center justify-center font-bold text-sm">
+                      {displayName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="font-bold text-sm truncate">{displayName}</span>
+                </div>
+                <button
+                  onClick={() => { signOut(); closeMenu(); }}
+                  className="block w-full text-left text-black hover:underline px-3 py-2 text-xl font-bold font-headings uppercase"
+                >
+                  Log Out
+                </button>
+              </>
+            ) : !loading ? (
+              <>
+                <Link
+                  to="/login"
+                  className="block text-black hover:underline px-3 py-2 text-xl font-bold font-headings uppercase"
+                  onClick={closeMenu}
+                >
+                  Log In
+                </Link>
+                <div className="p-3">
+                  <Button className="w-full" href="/get-started" onClick={closeMenu}>
+                    Get Started
+                  </Button>
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
       )}

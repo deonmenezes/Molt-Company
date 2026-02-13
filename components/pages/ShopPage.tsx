@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShoppingBag, Gift, Zap, Crown } from 'lucide-react';
 import { Button } from '../Button';
+import { redirectToCheckout } from '../../lib/stripe';
 
 const products = [
 	{
@@ -9,7 +10,8 @@ const products = [
 		description: "Get 3 additional AI employees at a discounted bundle price",
 		price: 199,
 		originalPrice: 297,
-		badge: "Best Value"
+		badge: "Best Value",
+		stripePriceId: "price_ai_power_pack",
 	},
 	{
 		icon: Crown,
@@ -17,7 +19,8 @@ const products = [
 		description: "50+ pre-built automation templates for common business tasks",
 		price: 49,
 		originalPrice: null,
-		badge: null
+		badge: null,
+		stripePriceId: "price_premium_templates",
 	},
 	{
 		icon: Gift,
@@ -25,7 +28,8 @@ const products = [
 		description: "1-hour session with our AI implementation expert",
 		price: 149,
 		originalPrice: 249,
-		badge: "Popular"
+		badge: "Popular",
+		stripePriceId: "price_setup_consultation",
 	},
 	{
 		icon: ShoppingBag,
@@ -33,18 +37,28 @@ const products = [
 		description: "Rebrand and resell Molt's AI solutions to your clients",
 		price: 999,
 		originalPrice: null,
-		badge: "Enterprise"
+		badge: "Enterprise",
+		stripePriceId: "price_white_label_license",
 	}
 ];
 
 const addons = [
-	{ name: "Priority Support", price: 29, period: "/mo" },
-	{ name: "Advanced Analytics", price: 19, period: "/mo" },
-	{ name: "API Access", price: 49, period: "/mo" },
-	{ name: "Custom Training", price: 199, period: "one-time" },
+	{ name: "Priority Support", price: 29, period: "/mo", stripePriceId: "price_addon_priority_support" },
+	{ name: "Advanced Analytics", price: 19, period: "/mo", stripePriceId: "price_addon_advanced_analytics" },
+	{ name: "API Access", price: 49, period: "/mo", stripePriceId: "price_addon_api_access" },
+	{ name: "Custom Training", price: 199, period: "one-time", stripePriceId: "price_addon_custom_training" },
 ];
 
 export const ShopPage: React.FC = () => {
+	const handleProductPurchase = (stripePriceId: string) => {
+		redirectToCheckout(stripePriceId, 'payment');
+	};
+
+	const handleAddonPurchase = (addon: typeof addons[number]) => {
+		const mode = addon.period === '/mo' ? 'subscription' : 'payment';
+		redirectToCheckout(addon.stripePriceId, mode);
+	};
+
 	return (
 		<section className="bg-white py-16 lg:py-24 min-h-screen">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,7 +113,12 @@ export const ShopPage: React.FC = () => {
 												<span className="text-xl text-gray-500 line-through">${product.originalPrice}</span>
 											)}
 										</div>
-										<Button variant="primary">Add to Cart</Button>
+										<Button
+											variant="primary"
+											onClick={() => handleProductPurchase(product.stripePriceId)}
+										>
+											Add to Cart
+										</Button>
 									</div>
 								</div>
 							</div>
@@ -124,7 +143,10 @@ export const ShopPage: React.FC = () => {
 									<span className="text-2xl font-bold">${addon.price}</span>
 									<span className="text-gray-600 font-semibold">{addon.period}</span>
 								</div>
-								<button className="font-bold uppercase text-sm border-2 border-black px-4 py-2 hover:bg-black hover:text-white transition-colors">
+								<button
+									onClick={() => handleAddonPurchase(addon)}
+									className="font-bold uppercase text-sm border-2 border-black px-4 py-2 hover:bg-black hover:text-white transition-colors"
+								>
 									Add
 								</button>
 							</div>

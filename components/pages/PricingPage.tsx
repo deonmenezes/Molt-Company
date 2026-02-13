@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Check, X } from 'lucide-react';
+import { Check, X, Zap, Rocket, Crown } from 'lucide-react';
 import { Button } from '../Button';
+import { redirectToCheckout } from '../../lib/stripe';
 
 const pricingPlans = [
 	{
 		name: "Starter",
 		price: 49,
 		description: "Perfect for small businesses just getting started",
+		icon: Zap,
 		features: [
 			{ name: "1 AI Employee", included: true },
 			{ name: "Email Management", included: true },
@@ -17,12 +19,18 @@ const pricingPlans = [
 			{ name: "Custom Integrations", included: false },
 		],
 		popular: false,
-		cta: "Start Free Trial"
+		cta: "Ignite Your Growth",
+		ctaSub: "14 days free — no card needed",
+		stripePriceIds: {
+			monthly: "price_starter_monthly",
+			yearly: "price_starter_yearly",
+		}
 	},
 	{
 		name: "Growth",
 		price: 149,
 		description: "For growing businesses ready to scale",
+		icon: Rocket,
 		features: [
 			{ name: "5 AI Employees", included: true },
 			{ name: "Email Management", included: true },
@@ -33,12 +41,18 @@ const pricingPlans = [
 			{ name: "Custom Integrations", included: false },
 		],
 		popular: true,
-		cta: "Start Free Trial"
+		cta: "Launch My AI Team",
+		ctaSub: "Most businesses start here",
+		stripePriceIds: {
+			monthly: "price_growth_monthly",
+			yearly: "price_growth_yearly",
+		}
 	},
 	{
 		name: "Enterprise",
 		price: 449,
 		description: "Full AI team for maximum scaling",
+		icon: Crown,
 		features: [
 			{ name: "Unlimited AI Employees", included: true },
 			{ name: "Email Management", included: true },
@@ -49,13 +63,28 @@ const pricingPlans = [
 			{ name: "Custom Integrations", included: true },
 		],
 		popular: false,
-		cta: "Contact Sales"
+		cta: "Go Unlimited",
+		ctaSub: "For teams that want it all",
+		isEnterprise: true,
+		stripePriceIds: {
+			monthly: "price_enterprise_monthly",
+			yearly: "price_enterprise_yearly",
+		}
 	}
 ];
 
 export const PricingPage: React.FC = () => {
 	const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 	const discount = billingCycle === 'yearly' ? 0.8 : 1; // 20% discount for yearly
+
+	const handlePlanSelect = (plan: typeof pricingPlans[number]) => {
+		if ('isEnterprise' in plan && plan.isEnterprise) {
+			window.location.href = '/get-started';
+			return;
+		}
+		const priceId = plan.stripePriceIds[billingCycle];
+		redirectToCheckout(priceId, 'subscription');
+	};
 
 	return (
 		<section className="bg-white py-16 lg:py-24 min-h-screen">
@@ -103,63 +132,77 @@ export const PricingPage: React.FC = () => {
 
 				{/* Pricing Cards */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-					{pricingPlans.map((plan) => (
-						<div
-							key={plan.name}
-							className={`relative bg-white border-3 border-black shadow-pop p-8 ${plan.popular ? 'transform scale-105 z-10' : ''
-								}`}
-						>
-							{plan.popular && (
-								<div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-									<span className="bg-black text-white font-bold text-sm uppercase px-4 py-2 border-2 border-black">
-										Most Popular
-									</span>
-								</div>
-							)}
-
-							<h3 className="font-headings text-3xl font-bold uppercase mb-2">
-								{plan.name}
-							</h3>
-							<p className="text-gray-700 font-semibold mb-6">
-								{plan.description}
-							</p>
-
-							<div className="mb-6">
-								<span className="text-5xl font-bold">
-									${Math.round(plan.price * discount)}
-								</span>
-								<span className="text-gray-600 font-semibold">/month</span>
-								{billingCycle === 'yearly' && (
-									<p className="text-sm text-gray-500 mt-1">
-										billed annually (${Math.round(plan.price * discount * 12)}/year)
-									</p>
-								)}
-							</div>
-
-							<ul className="space-y-3 mb-8">
-								{plan.features.map((feature) => (
-									<li key={feature.name} className="flex items-center gap-3">
-										{feature.included ? (
-											<Check className="text-black flex-shrink-0" size={20} strokeWidth={3} />
-										) : (
-											<X className="text-gray-400 flex-shrink-0" size={20} strokeWidth={3} />
-										)}
-										<span className={`font-semibold ${feature.included ? 'text-black' : 'text-gray-400'}`}>
-											{feature.name}
-										</span>
-									</li>
-								))}
-							</ul>
-
-							<Button
-								variant={plan.popular ? 'primary' : 'secondary'}
-								className="w-full"
-								href="/get-started"
+					{pricingPlans.map((plan) => {
+						const Icon = plan.icon;
+						return (
+							<div
+								key={plan.name}
+								className={`relative bg-white border-3 border-black shadow-pop p-8 flex flex-col ${plan.popular ? 'transform scale-105 z-10' : ''
+									}`}
 							>
-								{plan.cta}
-							</Button>
-						</div>
-					))}
+								{plan.popular && (
+									<div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+										<span className="bg-black text-white font-bold text-sm uppercase px-4 py-2 border-2 border-black">
+											Most Popular
+										</span>
+									</div>
+								)}
+
+								<div className="flex items-center gap-3 mb-2">
+									<div className="bg-pop-yellow border-2 border-black p-2">
+										<Icon size={24} strokeWidth={2.5} />
+									</div>
+									<h3 className="font-headings text-3xl font-bold uppercase">
+										{plan.name}
+									</h3>
+								</div>
+								<p className="text-gray-700 font-semibold mb-6">
+									{plan.description}
+								</p>
+
+								<div className="mb-6">
+									<span className="text-5xl font-bold">
+										${Math.round(plan.price * discount)}
+									</span>
+									<span className="text-gray-600 font-semibold">/month</span>
+									{billingCycle === 'yearly' && (
+										<p className="text-sm text-gray-500 mt-1">
+											billed annually (${Math.round(plan.price * discount * 12)}/year)
+										</p>
+									)}
+								</div>
+
+								<ul className="space-y-3 mb-8 flex-1">
+									{plan.features.map((feature) => (
+										<li key={feature.name} className="flex items-center gap-3">
+											{feature.included ? (
+												<Check className="text-black flex-shrink-0" size={20} strokeWidth={3} />
+											) : (
+												<X className="text-gray-400 flex-shrink-0" size={20} strokeWidth={3} />
+											)}
+											<span className={`font-semibold ${feature.included ? 'text-black' : 'text-gray-400'}`}>
+												{feature.name}
+											</span>
+										</li>
+									))}
+								</ul>
+
+								<div>
+									<Button
+										variant={plan.popular ? 'primary' : 'secondary'}
+										className="w-full"
+										size="lg"
+										onClick={() => handlePlanSelect(plan)}
+									>
+										{plan.cta}
+									</Button>
+									<p className="text-center text-sm font-semibold text-gray-500 mt-3">
+										{plan.ctaSub}
+									</p>
+								</div>
+							</div>
+						);
+					})}
 				</div>
 
 				{/* FAQ Section */}
